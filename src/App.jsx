@@ -9,6 +9,7 @@ import {
   Checkbox,
   Row,
   Col,
+  FloatButton,
 } from "antd";
 import {
   ArrowDownOutlined,
@@ -30,7 +31,9 @@ import fantasyBackground from "./assets/fantasy_tavern.jpg";
 import spaceImg from "./assets/space_exploration.jpg";
 import spaceBackground from "./assets/space_room.jpg";
 import evilImg from "./assets/goblin_king.jpg";
-import evilBackground from "./assets/cave.jpg";
+import evilBackground from "./assets/goblins_forest.jpg";
+import horrorImg from "./assets/firecamp.jpg";
+import horrorBackground from "./assets/graveyard.jpg";
 
 const { Paragraph } = Typography;
 
@@ -54,7 +57,7 @@ const themes = {
     background: spaceBackground,
   },
   evil: {
-    title: "L'anniversaire du Roi Gobelin",
+    title: "L'anniversaire du Mal",
     img: evilImg,
     background: evilBackground,
   },
@@ -65,8 +68,8 @@ const themes = {
   },
   horror: {
     title: "Histoires d'horreur",
-    img: "https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png",
-    background: "https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png",
+    img: horrorImg,
+    background: horrorBackground,
   },
   pirate: {
     title: "À bon port",
@@ -126,9 +129,8 @@ function App() {
     (theme) => {
       setSelectedTheme(theme);
       const newAvailableWords = [...allWords];
-      newAvailableWords.sort(() => 0.5 - Math.random());
-      setAvailableWords(newAvailableWords);
-      next();
+      const shuffledWords = shuffle(newAvailableWords);
+      setAvailableWords(shuffledWords);
     },
     [allWords, next]
   );
@@ -171,19 +173,8 @@ function App() {
 
   if (ended)
     return (
-      <Flex
-        justify="center"
-        align="center"
-        style={{
-          height: "100%",
-          backgroundImage: `url(${themes[selectedTheme].background})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-        }}
-      >
-        <Card
-          style={{ width: 800 }}
-          bodyStyle={{ textAlign: "center" }}
+      <Container theme={selectedTheme}>
+        <Page
           actions={[
             <Button onClick={newGame} icon={<SendOutlined />} key="start">
               Démarrer une nouvelle partie
@@ -214,15 +205,22 @@ function App() {
               <ArrowDownOutlined />
             </Button>
           </Space>
-        </Card>
-      </Flex>
+        </Page>
+      </Container>
+    );
+
+  if (selectedTheme && currentWordIndex === -1)
+    return (
+      <Container theme={selectedTheme}>
+        <FloatButton onClick={next} icon={<SendOutlined />} />
+      </Container>
     );
 
   if (currentWordIndex === -1)
     return (
-      <Flex justify="center" align="center" style={{ height: "100%" }}>
-        <Card
-          style={{ width: 1200 }}
+      <Container>
+        <Page
+          large
           extra={
             <Space size="small">
               {categories.map((category) => (
@@ -260,68 +258,87 @@ function App() {
               </Col>
             ))}
           </Row>
-        </Card>
-      </Flex>
+        </Page>
+      </Container>
     );
 
   return (
-    <>
-      <Flex
-        justify="center"
-        align="center"
-        style={{
-          height: "100%",
-          backgroundImage: `url(${themes[selectedTheme].background})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-        }}
+    <Container theme={selectedTheme}>
+      <Page
+        title={`Mot ${currentWordIndex + 1}/${lastSeenWordIndex + 1}`}
+        actions={[
+          <Button
+            onClick={previous}
+            icon={<ArrowLeftOutlined />}
+            shape="circle"
+            key="previous"
+          />,
+          <Button onClick={endGame} icon={<CheckOutlined />} key="start">
+            Terminer la partie
+          </Button>,
+          <Button
+            onClick={next}
+            icon={<ArrowRightOutlined />}
+            shape="circle"
+            key="next"
+          />,
+        ]}
       >
-        <Card
-          bordered={false}
-          style={{ width: 800 }}
-          title={`Mot ${currentWordIndex + 1}/${lastSeenWordIndex + 1}`}
-          actions={[
-            <Button
-              onClick={previous}
-              icon={<ArrowLeftOutlined />}
-              shape="circle"
-              key="previous"
-            />,
-            <Button onClick={endGame} icon={<CheckOutlined />} key="start">
-              Terminer la partie
-            </Button>,
-            <Button
-              onClick={next}
-              icon={<ArrowRightOutlined />}
-              shape="circle"
-              key="next"
-            />,
-          ]}
+        <Textfit
+          mode="multi"
+          style={{
+            width: "100%",
+            height: 200,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            lineHeight: 1,
+            padding: 20,
+            boxSizing: "border-box",
+          }}
+          forceSingleModeWidth={false}
         >
-          <Textfit
-            mode="multi"
-            style={{
-              width: "100%",
-              height: 200,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-              lineHeight: 1,
-              padding: 20,
-              boxSizing: "border-box",
-            }}
-            forceSingleModeWidth={false}
-          >
-            {availableWords[currentWordIndex]}
-          </Textfit>
-        </Card>
-      </Flex>
-    </>
+          {availableWords[currentWordIndex]}
+        </Textfit>
+      </Page>
+    </Container>
   );
 }
 
 export default App;
+
+function Page({ large, ...props }) {
+  return (
+    <Card
+      bordered={false}
+      style={{ width: large ? 1200 : 800 }}
+      bodyStyle={{ textAlign: "center" }}
+      {...props}
+    />
+  );
+}
+
+function Container({ children, theme }) {
+  return (
+    <Flex
+      justify="center"
+      align="center"
+      style={{
+        height: "100%",
+        ...(theme
+          ? {
+              backgroundImage: `url(${themes[theme].background})`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+            }
+          : {}),
+      }}
+    >
+      {children}
+    </Flex>
+  );
+}
 
 function Spoiler({ children }) {
   const [revealed, setRevealed] = useState(false);
@@ -345,4 +362,23 @@ function Spoiler({ children }) {
       type="dashed"
     />
   );
+}
+function shuffle(array) {
+  let currentIndex = array.length,
+    randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex > 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
 }
