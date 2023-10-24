@@ -32,6 +32,8 @@ import spaceImg from "./assets/space_exploration.jpg";
 import spaceBackground from "./assets/space_room.jpg";
 import evilImg from "./assets/goblin_king.jpg";
 import evilBackground from "./assets/goblins_forest.jpg";
+import secretImg from "./assets/firecamp.jpg";
+import secretBackground from "./assets/graveyard.jpg";
 import horrorImg from "./assets/firecamp.jpg";
 import horrorBackground from "./assets/graveyard.jpg";
 
@@ -63,8 +65,8 @@ const themes = {
   },
   secret: {
     title: "Opération S.E.C.R.E.T.",
-    img: "https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png",
-    background: "https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png",
+    img: secretImg,
+    background: secretBackground,
   },
   horror: {
     title: "Histoires d'horreur",
@@ -98,8 +100,11 @@ function App() {
   );
 
   const paginatedWords = useMemo(() => {
-    return availableWords.slice(startPaginatedIndex, startPaginatedIndex + 10);
-  }, [startPaginatedIndex, availableWords]);
+    return availableWords.slice(
+      startPaginatedIndex,
+      startPaginatedIndex + Math.min(lastSeenWordIndex + 1, 10)
+    );
+  }, [startPaginatedIndex, availableWords, lastSeenWordIndex]);
 
   const paginationUp = useCallback(() => {
     setStartPaginatedIndex((index) => index - 1);
