@@ -30,10 +30,10 @@ import fantasyImg from "./assets/fantasy_tavern_cropped.jpg";
 import fantasyBackground from "./assets/fantasy_tavern.jpg";
 import spaceImg from "./assets/space_exploration.jpg";
 import spaceBackground from "./assets/space_room.jpg";
-import evilImg from "./assets/goblin_king.jpg";
-import evilBackground from "./assets/goblins_forest.jpg";
-import secretImg from "./assets/firecamp.jpg";
-import secretBackground from "./assets/graveyard.jpg";
+import evilImg from "./assets/evillord.png";
+import evilBackground from "./assets/swamp.png";
+import secretImg from "./assets/maddoctor.jpg";
+import secretBackground from "./assets/badlair.jpg";
 import horrorImg from "./assets/firecamp.jpg";
 import horrorBackground from "./assets/graveyard.jpg";
 
@@ -49,7 +49,7 @@ const categoriesLabels = {
 
 const themes = {
   fantasy: {
-    title: "La chanson du Barde",
+    title: "La chanson des Héros",
     img: fantasyImg,
     background: fantasyBackground,
   },
@@ -69,7 +69,7 @@ const themes = {
     background: secretBackground,
   },
   horror: {
-    title: "Histoires d'horreur",
+    title: "Histoires d'horreur au coin du feu",
     img: horrorImg,
     background: horrorBackground,
   },
@@ -217,7 +217,10 @@ function App() {
   if (selectedTheme && currentWordIndex === -1)
     return (
       <Container theme={selectedTheme}>
-        <FloatButton onClick={next} icon={<SendOutlined />} />
+        <FloatButton.Group>
+          <FloatButton onClick={newGame} icon={<ArrowLeftOutlined />} />
+          <FloatButton onClick={next} icon={<SendOutlined />} />
+        </FloatButton.Group>
       </Container>
     );
 
