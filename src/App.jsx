@@ -23,7 +23,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
 import words from "./words";
-import { Textfit } from "react-textfit";
+import { Textfit } from "new-react-textfit";
 import pirateImg from "./assets/ship.jpg";
 import pirateBackground from "./assets/pirate_tavern2.jpg";
 import fantasyImg from "./assets/fantasy_tavern_cropped.jpg";
